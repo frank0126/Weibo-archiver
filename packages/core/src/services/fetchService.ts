@@ -148,6 +148,7 @@ export class FetchService {
     this.fetcher = createFetcher({
       headers: {
         Cookie: cookies || undefined,
+        referer: 'https://weibo.com/',
       },
       beforeFetch: this.onBeforeFetch,
       on403Error: this.on403Error,
