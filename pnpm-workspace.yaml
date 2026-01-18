@@ -1,3 +1,14 @@
+shellEmulator: true
+
+trustPolicy: no-downgrade
+
 packages:
   - 'packages/*'
   - 'apps/*'
+overrides:
+  css-select: 5.1.0
+onlyBuiltDependencies:
+  - esbuild
+  - msw
+  - simple-git-hooks
+  - vue-demi

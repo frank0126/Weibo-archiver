@@ -29,8 +29,8 @@
     "start": "node weibo-archiver.mjs"
   },
   "devDependencies": {
-    "@types/yargs": "^17.0.33",
+    "@types/yargs": "^17.0.35",
     "@weibo-archiver/core": "workspace:^",
-    "yargs": "^17.7.2"
+    "yargs": "^18.0.0"
   }
 }
