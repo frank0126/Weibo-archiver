@@ -2,6 +2,7 @@ import type {
   Comment,
   Favorite,
   Following,
+  Like,
   LinkCard,
   Post,
   PostMeta,
@@ -311,6 +312,46 @@ export class PostParser {
       favBy,
     }
   }
+
+  static parseLike(rawLike: RawFavorite, likedBy: string): Like | undefined {
+    const mblogid = rawLike.mblogid
+    if (!mblogid) {
+      console.warn('Skipping post due to missing mblogid:', rawLike)
+      return undefined
+    }
+
+    let retweeted_status: Retweet | undefined
+    const hasRetweeted = 'retweeted_status' in rawLike && rawLike.retweeted_status?.id
+    if (hasRetweeted) {
+      retweeted_status = PostParser.parseRetweet(rawLike.retweeted_status, rawLike.url_struct || [])
+    }
+
+    const meta = PostParser.parseMeta(rawLike)
+    const text = PostParser.parseText(rawLike.text_raw, rawLike.url_struct || [])
+    const imgs = PostParser.parseImage(rawLike)
+    const card = PostParser.parseLinkCard(rawLike)
+    const user = UserParser.parseFromPost(rawLike)!
+
+    const {
+      reposts_count,
+      comments_count,
+      attitudes_count,
+    } = rawLike
+
+    return {
+      ...meta,
+      mblogid,
+      text,
+      imgs,
+      repostsCount: reposts_count,
+      commentsCount: comments_count,
+      likesCount: attitudes_count,
+      card,
+      retweet: retweeted_status,
+      user,
+      likedBy,
+    }
+  }
 }
 
 export class WeiboParser {
@@ -350,6 +391,25 @@ export class WeiboParser {
       }
       catch (error) {
         console.error(`[parse bookmarks], ${error}`, rawItem.mblogid)
+        throw error
+      }
+    }
+
+    return posts
+  }
+
+  static parseLikes(rawData: RawFavorite[], likedBy: string): Like[] {
+    const posts: Like[] = []
+
+    for (const rawItem of rawData) {
+      try {
+        const post = PostParser.parseLike(rawItem, likedBy)
+        if (post) {
+          posts.push(post)
+        }
+      }
+      catch (error) {
+        console.error(`[parse likes], ${error}`, rawItem.mblogid)
         throw error
       }
     }

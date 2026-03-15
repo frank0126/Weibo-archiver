@@ -34,6 +34,7 @@ export const FETCH_PATH = {
   POST_COMMENTS: '/statuses/buildComments',
 
   FAVORITES: '/favorites/all_fav',
+  LIKES: '/statuses/like',
 } as const
 
 export const DEFAULT_FETCH_CONFIG: FetchConfig = {
@@ -47,6 +48,7 @@ export const DEFAULT_FETCH_CONFIG: FetchConfig = {
 
   hasFollowings: true,
   hasFavorites: true,
+  hasLikes: true,
   hasWeibo: true,
 
   sinceId: '',

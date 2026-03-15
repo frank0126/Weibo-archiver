@@ -2,7 +2,7 @@ import type { UserInfo } from '@weibo-archiver/core'
 
 export interface FetchState {
   status: 'idle' | 'running' | 'finish'
-  fetchType: 'weibo' | 'followings' | 'favorites'
+  fetchType: 'weibo' | 'followings' | 'favorites' | 'likes'
 }
 
 export interface UserConfig {
@@ -18,6 +18,7 @@ export interface UserConfig {
 
   hasFollowings: boolean
   hasFavorites: boolean
+  hasLikes: boolean
   hasWeibo: boolean
 
   startAt: number

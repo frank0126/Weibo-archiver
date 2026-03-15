@@ -71,6 +71,10 @@ const FetchArgsSchema = z.object({
     page: z.number(),
     with_total: z.boolean(),
   }),
+  likes: z.object({
+    uid: z.string(),
+    page: z.number(),
+  }),
 })
 
 export type FetchArgs = z.infer<typeof FetchArgsSchema>

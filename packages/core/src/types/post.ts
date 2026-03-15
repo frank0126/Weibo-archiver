@@ -56,9 +56,18 @@ const bookmarkSchema = _postSchema.extend({
   card: linkCardSchema.optional(),
 })
 
+// 点赞的微博结构与收藏类似
+const likeSchema = _postSchema.extend({
+  likedBy: z.string(),
+  user: userSchema,
+  retweet: retweetSchema.optional(),
+  card: linkCardSchema.optional(),
+})
+
 export type LinkCard = z.infer<typeof linkCardSchema>
 export type PostMeta = z.infer<typeof postMetaSchema>
 export type Post = z.infer<typeof postSchema>
 export type Retweet = z.infer<typeof retweetSchema>
 export type Comment = z.infer<typeof commentSchema>
 export type Favorite = z.infer<typeof bookmarkSchema>
+export type Like = z.infer<typeof likeSchema>

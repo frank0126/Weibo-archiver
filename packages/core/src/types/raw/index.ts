@@ -1,6 +1,8 @@
 export * from './favorites/all_fav'
 
 export * from './friendships/friends'
+
+export * from './likes/like'
 export * from './profile/detail'
 export * from './profile/followContent'
 

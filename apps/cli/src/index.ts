@@ -71,6 +71,11 @@ const argv = await yargs()
       description: '爬取收藏列表',
       default: true,
     },
+    hasLikes: {
+      type: 'boolean',
+      description: '爬取点赞列表',
+      default: true,
+    },
     hasWeibo: {
       type: 'boolean',
       description: '爬取微博列表',
@@ -106,6 +111,7 @@ if (!argv.useConfig) {
     hasComment: argv.hasComment,
     hasRepost: argv.hasRepost,
     hasFavorites: argv.hasFavorites,
+    hasLikes: argv.hasLikes,
     hasFollowings: argv.hasFollowings,
     hasWeibo: argv.hasWeibo,
     uid: argv.uid,

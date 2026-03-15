@@ -47,6 +47,11 @@ const options: Option[] = [
     remark: '导出自己收藏的微博，对其他人无效',
   },
   {
+    label: '导出点赞',
+    value: 'hasLikes',
+    remark: '导出自己点赞过的微博，对其他人无效',
+  },
+  {
     label: '导出微博',
     value: 'hasWeibo',
     remark: '',

@@ -16,6 +16,7 @@ export interface FetchConfig {
 
   hasFollowings: boolean
   hasFavorites: boolean
+  hasLikes: boolean
   hasWeibo: boolean
 
   sinceId: string

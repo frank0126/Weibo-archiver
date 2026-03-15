@@ -1,6 +1,7 @@
 import type {
   Favorite,
   Following,
+  Like,
   Post,
   UserInfo,
 } from '@weibo-archiver/core'
@@ -32,6 +33,7 @@ export function usePost() {
       posts: await idb.getAllPostsCount(),
       favorites: await idb.getAllFavoritesCount(),
       followings: await idb.getAllFollowingsCount(),
+      likes: await idb.getAllLikesCount(),
     }
   }
 
@@ -41,6 +43,7 @@ export function usePost() {
       posts: 0,
       favorites: 0,
       followings: 0,
+      likes: 0,
     }
     updateConfig({
       curPage: 0,
@@ -86,19 +89,26 @@ export function usePost() {
     await idb.addFavorites(favorites)
   }
 
+  async function addLikes(likes: Like[]) {
+    fetchCount.value.likes = likes.length
+    await idb.addLikes(likes)
+  }
+
   async function exportAllData() {
     try {
-      const { hasFavorites, hasFollowings, hasWeibo } = config.value
+      const { hasFavorites, hasFollowings, hasWeibo, hasLikes } = config.value
 
       const weibo = hasWeibo ? await idb.getAllPosts() : []
       const followings = hasFollowings ? await idb.getAllFollowings() : []
       const favorites = hasFavorites ? await idb.getAllFavorites() : []
+      const likes = hasLikes ? await idb.getAllLikes() : []
       const user = idb.curUser
 
       await exportData({
         weibo,
         favorites,
         followings,
+        likes,
         user,
       })
     }
@@ -118,5 +128,6 @@ export function usePost() {
     exportAllData,
     addFollowingUsers,
     addFavorites,
+    addLikes,
   }
 }

@@ -1,4 +1,4 @@
-import type { Comment, Favorite, Post } from '../types'
+import type { Comment, Favorite, Like, Post } from '../types'
 import type { FetchArgs } from '../types/fetchArgs'
 import type { RawPostsTimeline } from '../types/raw'
 import type { FetchService } from './fetchService'
@@ -258,6 +258,30 @@ export class PostService {
       await this._setLongText(data as any)
 
       const parsed = WeiboParser.parseBookmarks(data as any[], this.uid)
+
+      result.push(...parsed)
+      page += 1
+    }
+
+    return result
+  }
+
+  async getLikes(): Promise<Like[]> {
+    let page = 1
+    const result: Like[] = []
+    while (true) {
+      const data = await this.fetchService.likes({
+        uid: this.uid,
+        page,
+      })
+
+      if (data.length < 1) {
+        break
+      }
+
+      await this._setLongText(data as any)
+
+      const parsed = WeiboParser.parseLikes(data as any[], this.uid)
 
       result.push(...parsed)
       page += 1

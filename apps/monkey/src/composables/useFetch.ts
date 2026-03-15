@@ -21,6 +21,7 @@ export const fetchCount = ref({
   posts: 0,
   followings: 0,
   favorites: 0,
+  likes: 0,
 })
 
 export async function startFetch() {
@@ -43,6 +44,7 @@ export async function startFetch() {
     hasWeibo,
     hasFollowings,
     hasFavorites,
+    hasLikes,
   } = config.value
 
   if (hasWeibo) {
@@ -82,6 +84,12 @@ export async function startFetch() {
     fetchState.fetchType = 'favorites'
     const data = await postService.getFavorites()
     await postStore.addFavorites(data)
+  }
+
+  if (hasLikes) {
+    fetchState.fetchType = 'likes'
+    const data = await postService.getLikes()
+    await postStore.addLikes(data)
   }
 
   fetchState.status = 'finish'

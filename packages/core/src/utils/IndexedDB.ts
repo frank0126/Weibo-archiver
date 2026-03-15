@@ -1,6 +1,6 @@
 import type { CalendarDate } from '@internationalized/date'
 import type { Table } from 'dexie'
-import type { Favorite, Following, Post, UserInfo } from '../types'
+import type { Favorite, Following, Like, Post, UserInfo } from '../types'
 import { parseAbsolute, today } from '@internationalized/date'
 import Dexie from 'dexie'
 import { DEFAULT_PAGE_SIZE } from '../constants'
@@ -10,6 +10,7 @@ export class IndexedDB extends Dexie {
   posts!: Table<Post, number>
   followings!: Table<Following, number>
   favorites!: Table<Favorite, number>
+  likes!: Table<Like, number>
 
   curUser!: UserInfo
 
@@ -30,6 +31,15 @@ export class IndexedDB extends Dexie {
         posts: 'id, mblogid, userId, createdAt',
         followings: 'uid',
         favorites: 'id, mblogid, favBy',
+      })
+
+    this.version(3)
+      .stores({
+        users: 'uid, createdAt',
+        posts: 'id, mblogid, userId, createdAt',
+        followings: 'uid',
+        favorites: 'id, mblogid, favBy',
+        likes: 'id, mblogid, likedBy',
       })
   }
 
@@ -63,6 +73,13 @@ export class IndexedDB extends Dexie {
       favorite.favBy = this.curUid
     }
     return this.favorites.bulkPut(favorites)
+  }
+
+  async addLikes(likes: Like[]) {
+    for (const like of likes) {
+      like.likedBy = this.curUid
+    }
+    return this.likes.bulkPut(likes)
   }
 
   async getFollowings(): Promise<Following[]> {
@@ -99,6 +116,25 @@ export class IndexedDB extends Dexie {
   async getAllFavoritesCount(): Promise<number> {
     return this.favoriteQuery
       .count()
+  }
+
+  async getAllLikes(): Promise<Like[]> {
+    return this.likeQuery.toArray()
+  }
+
+  async getLikes(
+    page: number,
+    pageSize: number = DEFAULT_PAGE_SIZE,
+  ): Promise<Like[]> {
+    return this.likeQuery
+      .offset((page - 1) * pageSize)
+      .limit(pageSize)
+      .reverse()
+      .toArray()
+  }
+
+  async getAllLikesCount(): Promise<number> {
+    return this.likeQuery.count()
   }
 
   async getUsers(): Promise<UserInfo[]> {
@@ -169,12 +205,14 @@ export class IndexedDB extends Dexie {
     const postsCount = await this.postQuery.delete()
     const followingsCount = await this.followingQuery.clear()
     const favoritesCount = await this.favoriteQuery.delete()
+    const likesCount = await this.likeQuery.delete()
     const usersCount = await this.users.where('uid').equals(this.curUid).delete()
 
     return {
       postsCount,
       followingsCount,
       favoritesCount,
+      likesCount,
       usersCount,
     }
   }
@@ -188,6 +226,12 @@ export class IndexedDB extends Dexie {
   private get favoriteQuery() {
     return this.favorites
       .where('favBy')
+      .equals(this.curUid)
+  }
+
+  private get likeQuery() {
+    return this.likes
+      .where('likedBy')
       .equals(this.curUid)
   }
 

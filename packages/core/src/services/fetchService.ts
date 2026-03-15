@@ -4,6 +4,7 @@ import type {
   RawComments,
   RawFavorite,
   RawFollowings,
+  RawLike,
   RawLongText,
   RawMyFollowings,
   RawPostsTimeline,
@@ -139,6 +140,16 @@ export class FetchService {
 
     await this.onRawFetch({ data, type: FETCH_PATH.FAVORITES })
     return data.status
+  }
+
+  async likes(args: FetchArgs['likes']): Promise<RawLike[]> {
+    const { data } = await this.fetcher<{ list: RawLike[] }, FetchArgs['likes']>(
+      FETCH_PATH.LIKES,
+      args,
+    )
+
+    await this.onRawFetch({ data, type: FETCH_PATH.LIKES })
+    return data.list
   }
 
   setFetcher(cookies: string) {

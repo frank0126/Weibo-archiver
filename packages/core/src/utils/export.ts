@@ -1,4 +1,4 @@
-import type { Favorite, Post, UserBio, UserInfo } from '@weibo-archiver/core'
+import type { Favorite, Like, Post, UserBio, UserInfo } from '@weibo-archiver/core'
 import { WeiboParser } from '@weibo-archiver/core'
 import fileSaver from 'file-saver'
 
@@ -7,6 +7,7 @@ export async function exportData(data: {
   user: UserInfo | null
   followings: UserBio[]
   favorites: Favorite[]
+  likes?: Like[]
 }) {
   console.log('Exporting posts count:', data.weibo.length)
   if (!data.user?.name) {
@@ -20,7 +21,12 @@ export async function exportData(data: {
   const dataBlob = new Blob([dataStr], { type: 'application/json' })
   fileSaver.saveAs(dataBlob, `weibo-data-${username}.json`)
 
-  const imgsData = [data.weibo, data.favorites]
+  const allData = [data.weibo, data.favorites]
+  if (data.likes) {
+    allData.push(data.likes)
+  }
+
+  const imgsData = allData
     .flatMap(WeiboParser.parseImgs)
     .join(',\n') // csv 格式
 
